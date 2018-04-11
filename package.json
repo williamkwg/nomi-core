@@ -1,0 +1,17 @@
+{
+  "name": "nomi-core",
+  "version": "1.0.0",
+  "description": "a core package of nomi.js framework",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "nomi",
+    "node"
+  ],
+  "author": "weiguo.kong",
+  "license": "ISC",
+  "dependencies": {
+    "koa": "^2.3.0"
+  }
+}
