@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "description": "a core package of nomi.js framework",
   "scripts": {
-    "test": "tsc -w && node index.js"
+    "test": "tsc -w",
+    "start": "node ./dist/index.js"
   },
   "mian": "index.js",
   "keywords": [
@@ -13,9 +14,17 @@
     "koa2",
     "koa"
   ],
+  "repository": {
+    "type": "git",
+    "url": "git@gitlab.corp.qunar.com:fe/nomi-core.git"
+  },
   "author": "weiguo.kong",
   "license": "ISC",
   "dependencies": {
-    "koa": "^2.3.0"
+    "koa": "^2.5.0"
+  },
+  "devDependencies": {
+    "@types/koa": "^2.0.45",
+    "typescript": "^2.8.1"
   }
 }
