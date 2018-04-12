@@ -1,4 +1,6 @@
 
-import * as koa from 'koa';
-const app = new koa();
-app.listen(3000);
+import { Server } from './lib/Server';
+import * as config from '../config/config.default';
+const server = new Server(Number(config.default.port));
+
+
