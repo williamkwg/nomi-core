@@ -1,13 +1,14 @@
 import * as koa from 'koa'
-import { defaultConfI, logConfigI, mwConfigI, coreConfigI } from '../interface/interface'
-import * as defaultConfig from '../../config/config.default'
-import { port, serviceDir } from '../config/config'
+import { join } from 'path';
+import { defaultConfI, logConfigI, mwConfigI, coreConfigI, routerI } from '../interface/interface'
+const defaultConfig = require(join(process.cwd(), 'config', 'config.default')) // 应用的config
+const mwConfig = require(join(process.cwd(), 'config', 'middleware'))
+import { port, serviceDir, controllerDir, mwConf, middlewareDir } from '../config/config'
+import { MiddlewareLoader } from './MiddlewareLoader';
 export class Server {
 
   private app: object = Object.create({});
   private config: object = Object.create({});
-  private controller: object = Object.create({});
-  private service: object = Object.create({});
   private router: object = Object.create({});
   private middleware: object = Object.create({});
   private plugin: object = Object.create({});
@@ -19,17 +20,11 @@ export class Server {
     const app = new koa();
     this.startApp(); // 启动app
     app.listen(listen); //监听端口
-    this.setApp(app);
+    this.app = app;
   }
   /** getter 方法 */
   getApp() {
     return this.app;
-  }
-  getController() {
-    return this.controller;
-  }
-  getService() {
-    return this.service;
   }
   getRouter() {
     return this.router;
@@ -43,21 +38,10 @@ export class Server {
   getConfig() {
     return this.config;
   }
+
   /** setter 方法 */
-  protected setService(service: object) {
-    this.service = service;
-  }
   protected setConfig(config: object) {
     this.config = config;
-  }
-  protected setApp(app: object) {
-    this.app = app;
-  }
-  protected setController(controller: object) {
-    this.controller = controller;
-  }
-  protected setMw(middleware: object) {
-    this.middleware = middleware;
   }
   protected setPlugin(plugin: object) {
     this.plugin = plugin;
@@ -70,11 +54,11 @@ export class Server {
    * 启动应用程序——相当于java预编译过程
    */
   private startApp() {
-    const config = this.formateConfig(defaultConfig.default);
-    this.setConfig({...defaultConfig.default, ...config});
-    this.setService(this.loadService(config.service)); //收集service对象 @service
-    this.setController(this.loadController());// 收集controller对象 @controller 收集routers对象
-    this.setMw(this.loadMw()); // 收集 中间件 对象
+    const config = this.formateConfig(defaultConfig);
+    this.setConfig({...defaultConfig, ...config});
+    const router = this.loadRouter(config);
+    this.setRouter(router);
+    const mws = this.loadMw(mwConfig);
     this.setPlugin(this.loadPlugin()); // 收集 中间件 对象
     this.loadExe(); //加载自定义启动文件
   }
@@ -87,14 +71,20 @@ export class Server {
    */
   private formateConfig(config: defaultConfI, logConfig?: logConfigI, mwConfig?: mwConfigI, pluginConfig ?:Object): coreConfigI {
     const service = config.serviceDir || serviceDir;
-    const controller = config.controllerDir;
+    const controller = config.controllerDir || controllerDir;
     return { service, controller };
   }
-  private loadService(dir: Array<string> | string) {
-    return {} //加载第三方模块，获取coreService对象 含有 getServices方法 ---- 和第三方进行约定
+  private loadRouter(dirObj: coreConfigI): routerI {
+    return {
+      match: () => {}
+    } //加载第三方模块，获取coreService对象 含有 getServices方法 ---- 和第三方进行约定
   }
-  private loadController() { return {} }
   private loadExe() {}
-  private loadMw() {return {}}
+  private loadMw(mwConfig: mwConfigI = mwConf) {
+    const mwl = new MiddlewareLoader(mwConfig, defaultConfig.middlewareDir || middlewareDir);
+    return {
+
+    }
+  }
   private loadPlugin() { return {}}
 };

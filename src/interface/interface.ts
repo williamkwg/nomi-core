@@ -13,8 +13,8 @@ export interface logConfigI {
 }
 
 export interface mwConfigI {
-  global ?: Array<any>,
-  local ?: Array<any>
+  global ?: Array<object>,
+  local ?: Array<object>
 }
 
 export interface coreConfigI {
@@ -22,3 +22,6 @@ export interface coreConfigI {
   controller: Array<string> | string
 }
 
+export interface routerI {
+  match: Function
+}
