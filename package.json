@@ -3,9 +3,12 @@
   "version": "1.0.0",
   "description": "a core package of nomi.js framework",
   "scripts": {
-    "start": "node ./dist/index.js"
+    "start": "webpack-dev-server --open",
+    "build": "webpack",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "watch": "webpack --watch"
   },
-  "mian": "./dist/index.js",
+  "private": true,
   "keywords": [
     "nomi",
     "node",
@@ -20,6 +23,16 @@
   "author": "weiguo.kong",
   "license": "ISC",
   "dependencies": {
-    "koa": "^2.5.0"
+    "babel-preset-es2015": "^6.24.1",
+    "koa": "^2.5.0",
+    "webpack": "^4.8.3"
+  },
+  "devDependencies": {
+    "babel-core": "^6.26.3",
+    "babel-loader": "^7.1.4",
+    "babel-preset-env": "^1.7.0",
+    "webpack-cli": "^2.1.3",
+    "webpack-dev-server": "^3.1.4",
+    "webpack-merge": "^4.1.2"
   }
 }
