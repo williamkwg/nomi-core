@@ -59,8 +59,8 @@ function Tokenizer(code){
     var input = new inputStream(code)
     var curTokenStr = '',
         curIndex = 0,
-        cache = {};
-    cur = null,
+        cache = {},
+        cur = null,
         pre=null;
 
 

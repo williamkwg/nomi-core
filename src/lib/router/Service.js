@@ -1,4 +1,4 @@
-exports.Service = function(){
+exports.Service =  function Service(){
     if(typeof(arguments[0])!=='function'){
         return function(){
             var a = arguments;

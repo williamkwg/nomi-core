@@ -87,7 +87,6 @@ function parseObject(tk){
 function parseNotation(code){
     var tk = parser.parse(code),
         n=null,
-        matchNotation = false,
         curParentPath='',
         pre = null,
         res = [];
@@ -235,7 +234,7 @@ async function loadService(spath){
                 fs.readFile(curPath,'utf-8',function(err,code){
                     var res = parseServiceClsNotation(code);
                     each(res,function(e){
-                        var p = require("./"+path.relative(process.cwd(),curPath))[e.orgName];
+                        var p = require(path.relative(__dirname,curPath).replace(/\\/g,'/'))[e.orgName];
                         if(serviceMap[e.name]){
                             throw Error("存在重复的Service名称:"+e.name+"("+curPath+"),请设置别名！");
                         }else{
@@ -282,8 +281,7 @@ async function loadController(serviceMap,cpath){
         each(cpaths,function(epath){
             visitDir(process.cwd()+epath,pathMap,function(curPath){
                 cTotalCount++;
-                var res = fs.readFile(curPath,'utf-8',function(err,code){
-
+                fs.readFile(curPath,'utf-8',function(err,code){
                     var res = parseNotation(code),
                         classInstance = null,
                         clsCfg = null;
@@ -291,7 +289,7 @@ async function loadController(serviceMap,cpath){
                         if(e.type==="mapping"){
                             if(e.entityType==='class'){
                                 clsCfg = e.cfg;
-                                var c = require("./"+path.relative(process.cwd(),curPath))[e.name];
+                                var c = require(path.relative(__dirname,curPath).replace(/\\/g,'/'))[e.name];
                                 classInstance = new c();
                             }else if(e.entityType==='function'){
                                 var cfg = e.cfg;
@@ -337,6 +335,7 @@ async function loadController(serviceMap,cpath){
 //scan the services and controllers
 async function scan(cfg){
     let sMap = await loadService(cfg.servicePath);
+    console.log(sMap);
     return await loadController(sMap,cfg.controllerPath);
 }
 exports.scan = scan;
