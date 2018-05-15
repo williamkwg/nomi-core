@@ -35,11 +35,11 @@ const config = {
         "connectionLimit": 4 
     }
   },
-  "controllerDir": "app/controller",
+  "controllerDir": "controller",
   "logDir": "logs",
-  "serviceDir": "app/service",
-  "middlewareDir": "app/middleware",
-  "pluginDir": "app/plugin",
-  "task": "app/task"
+  "serviceDir": "service",
+  "middlewareDir": "middleware",
+  "pluginDir": "plugin",
+  "task": "task"
 };
 export default config;

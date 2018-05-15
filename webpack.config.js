@@ -1,7 +1,7 @@
 const path = require('path');
 
 module.exports = {
-  entry: './src/index.js',
+  entry: './main.js',
   devServer: {
     contentBase: './dist'
   },
@@ -25,5 +25,10 @@ module.exports = {
   },
   resolve: {
     extensions: ['*', '.js', '.json']
-  }
+  },
+  alias: {  
+    router: path.resolve(__dirname, 'src/lib/router'),
+    middleware: path.resolve(__dirname, 'src/lib/mwsLoader/lib/MwLoader.js'),
+    lib: path.resolve(__dirname, 'src/lib')
+  }  
 };
