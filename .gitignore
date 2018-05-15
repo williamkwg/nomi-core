@@ -40,6 +40,6 @@ Thumbs.db
 # *.tar.gz
 
 node_modules
-*.js
+*.ts
 config
-/lib/mwsLoader/*
+/src/lib/mwsLoader/*
