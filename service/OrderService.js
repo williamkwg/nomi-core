@@ -1,4 +1,4 @@
-var  Service =  require('router/Service.js').Service;
+var  Service =  require('./src/lib/router/Service.js').Service;
 
 @Service("service.orderService")
 class OrderService{
