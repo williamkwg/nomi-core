@@ -1,4 +1,5 @@
-var  Service =  require('../lib/router/Service.js').Service;
+var  Service =  require('router/Service.js').Service;
+
 @Service("service.orderService")
 class OrderService{
     async loadOrders() {

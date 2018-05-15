@@ -1,4 +1,4 @@
 export const port = 3000;
-export const serviceDir = "app/serive"
-export const controllerDir = "app/controller"
-export const middlewareDir = "app/middleware"
+export const serviceDir = "serive"
+export const controllerDir = "controller"
+export const middlewareDir = "middleware"
