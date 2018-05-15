@@ -4,7 +4,7 @@ const config = {
   "description": "nomiproject",
   "author": "weiguo.kong",
   "version": "1.0.0",
-  "port": 8080,
+  "port": 3333,
   "workers": 4,
   "multipart": {
     "fileExtensions": [ '.xlsx', '.xls' ]

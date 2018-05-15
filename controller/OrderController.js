@@ -1,5 +1,5 @@
-var  RequestMapping = require('../../../../../notations/Controller.js').RequestMapping;
-var  Service = require('../../../../../notations/Service.js').Service;
+var  RequestMapping = require('router/Controller.js').RequestMapping;
+var  Service = require('router/Service.js').Service;
 
 @RequestMapping({
     path:"/user/{userId:num}",

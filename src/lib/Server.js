@@ -4,7 +4,7 @@ const defaultConfig = require(join(process.cwd(), 'config', 'config.default')) /
 const mwConfig = require(join(process.cwd(), 'config', 'middleware'));
 import { port, serviceDir, controllerDir, middlewareDir } from '../config/config';
 import Router from 'router/Router'; 
-import MiddlewareLoader from './lib/mwsLoader/lib/MwLoader';
+import MiddlewareLoader from 'middleware';
 export default class Server {
   app;
   config;

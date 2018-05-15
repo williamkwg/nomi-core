@@ -24,11 +24,11 @@ module.exports = {
     net: 'empty'
   },
   resolve: {
-    extensions: ['*', '.js', '.json']
-  },
-  alias: {  
-    router: path.resolve(__dirname, 'src/lib/router'),
-    middleware: path.resolve(__dirname, 'src/lib/mwsLoader/lib/MwLoader.js'),
-    lib: path.resolve(__dirname, 'src/lib')
-  }  
+    extensions: ['*', '.js', '.json'],
+    alias: {  
+      router: path.resolve(__dirname, 'src/lib/router'),
+      middleware: path.resolve(__dirname, 'src/lib/mwsLoader/lib/MwLoader.js'),
+      lib: path.resolve(__dirname, 'src/lib')
+    }  
+  }
 };
