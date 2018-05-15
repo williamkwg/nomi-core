@@ -201,6 +201,9 @@ function visitDir(ppath,pathMap,cb,after){
     }else{
         pathMap[ppath] = true;
     }
+    if(!fs.existsSync(ppath)){
+        throw Error('The dir :'+ppath+' don\'t exist');
+    }
     fs.readdir(ppath,function(err,dirs){
         for(var i in dirs){
             let fileName = dirs[i],
