@@ -22,6 +22,7 @@ export default class Server {
     app.listen(listen || port); //listen port 
   }
   match(ctx, next) {
+    console.log('22222', this.router)
     const { middleware, controller, action } = this.router.match(ctx.request.url).action;
     // mwsLoader module handle global middlewares and local middlewares 
     this.middleware.use(this.app, middleware); 
@@ -32,9 +33,9 @@ export default class Server {
   /**
    * start application - precompile code
    */
-   _startApp() {
+   async _startApp() {
     const config = this._formateConfig(defaultConfig);
-    const router = this._loadRouter(config);
+    const router = await this._loadRouter(config);
     const mws = this._loadMw(mwConfig);
     this.app.use(this.match); // handle all middlewares 
     this._setConfig({...defaultConfig, ...config});
