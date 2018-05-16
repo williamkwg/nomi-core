@@ -3,8 +3,8 @@ import { join } from 'path';
 const defaultConfig = require(join(process.cwd(), 'config', 'config.default')) // the defalut config of application
 const mwConfig = require(join(process.cwd(), 'config', 'middleware'));
 import { port, serviceDir, controllerDir, middlewareDir } from '../config/config';
-import Router from 'router/Router'; 
-import MiddlewareLoader from 'middleware';
+import Router from './router/Router';
+import MiddlewareLoader from './mwsLoader/lib/MwLoader';
 export default class Server {
   app;
   config;
@@ -16,27 +16,29 @@ export default class Server {
    * @param listen : listen server port 
    */
   constructor(listen) {
-    const app = new koa();
+    const app = new koa.default();
     this.app = app;
     this._startApp(); // start app 
     app.listen(listen || port); //listen port 
   }
   match(ctx, next) {
-    const { middleware, controller, action } = this.router.match(ctx.request.url).action;
+    const { action, paras } = this.router.match(ctx.request.url, ctx.request.method.toLocaleLowerCase());
+    const { middleware, controller, act } = action;
     // mwsLoader module handle global middlewares and local middlewares 
     this.middleware.use(this.app, middleware); 
     // exec controller.action 
-    controller.action(ctx); 
+    controller.act(ctx.request, ctx.response, {...ctx.request.query, ...paras}, ctx);
+    console.log({...ctx.request.query, ...paras})
     next();
   }
   /**
    * start application - precompile code
    */
-   _startApp() {
+   async _startApp() {
     const config = this._formateConfig(defaultConfig);
-    const router = this.loadRouter(config);
+    const router = await this._loadRouter(config);
     const mws = this._loadMw(mwConfig);
-    this.app.use(this.match); // handle all middlewares 
+    this.app.use(this.match.bind(this)); // handle all middlewares
     this._setConfig({...defaultConfig, ...config});
     this._setRouter(router);
     this._setMws(mws); //gather middlewares 

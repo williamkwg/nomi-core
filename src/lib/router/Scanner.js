@@ -89,7 +89,7 @@ function parseNotation(code){
         n=null,
         curParentPath='',
         pre = null,
-        res = [];
+        res = [],
         curNotation = null;
     while(!tk.eof()){
         n = tk.next();

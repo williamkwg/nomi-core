@@ -147,6 +147,28 @@ var gData = {
     tree:null
 };
 
+function merge(des,src){
+    for(let key in src){
+        if(src.hasOwnProperty(key)){
+            des[key] = src[key]
+        }
+    }
+    return des;
+}
+
+function parseUrl(url){
+    url = url.split('?');
+    let paras = {};
+    if(url.length>1){
+        let ps = url[1].split('&');
+        each(ps,function(e,i){
+            let m = e.indexOf('=');
+            paras[e.substring(0,m)]= e.substr(m+1);
+        });
+    }
+    return {url:url[0],paras:paras};
+}
+
 //初始化
 async function init(cfg){
     //生成actionMap
@@ -163,7 +185,11 @@ async function init(cfg){
 
     return {
         match:function (url,method){
-            return match(url,method,gData.map,gData.tree);
+            url = parseUrl(url);
+            method = method.toLowerCase();
+            let res = match(url.url,method,gData.map,gData.tree);
+            merge(res.paras,url.paras);
+            return res;
         }
     };
 }

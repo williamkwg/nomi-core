@@ -160,4 +160,4 @@ class MwLoader {
         app.use(compose(mwList)); //应用的中间件流-队列
     }
 }
-exports.MwLoader = MwLoader;
+export default  MwLoader;
