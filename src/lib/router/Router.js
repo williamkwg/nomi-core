@@ -23,14 +23,12 @@ function toLst(o){
 //合并到树
 function merge2Tree(s,action,tree){
     s = s.replace(/\s/g,"");
-    var sa = s.split("/"),
+    let sa = s.split("/"),
         parasMap = {};
-    if(!tree[sa.length]){
-        tree[sa.length] = {};
-    }
+    tree[sa.length] = tree[sa.length]||{};
     tree = tree[sa.length];
-    for(var i=1,l= sa.length-1;i<=l;i++){
-        var cur = sa[i];
+    for(let i=1,l= sa.length-1;i<=l;i++){
+        let cur = sa[i];
         if(/^\{\w+:\w+\}$/.test(cur)){
             cur = cur.replace(/\{|\}/g,"").split(":");
             parasMap[i] = cur[0];
@@ -57,17 +55,14 @@ function toTreeMap(a){
         treeEmpty = true;
     each(a,function(e){
         if(/\{\w+:\w+\}/.test(e.path)){
-            if(treeEmpty){
-                treeEmpty = false;
-            }
+            treeEmpty = false;
             merge2Tree(e.path,e,tree);
         }else{
-            if(!map[e.path]){
-                map[e.path] = {};
-            }
+            map[e.path] = map[e.path]||{};
             map[e.path][e.method] = e;
         }
     });
+
     return {
         map:map,
         tree:treeEmpty?null:tree
@@ -119,7 +114,7 @@ function parseParas(url,map){
 //回溯
 function backtrack(lst,cDeep,deep,method,tree){
     if(!tree){
-        throw Error("");
+        throw Error("can't find url mapping action:"+lst.join("/"));
     }
     var cs = tree,str = lst[cDeep];
     var cd = genCadiates(str,cs);
@@ -129,13 +124,13 @@ function backtrack(lst,cDeep,deep,method,tree){
             if(treeNode.leaf){
                 return treeNode.action[method]?{action:treeNode.action[method],paras:parseParas(lst,treeNode.parasMap)}:null;
             }else{
-                throw Error("");
+                throw Error("can't find url mapping action:"+lst.join("/"));
             }
         }else{
             return backtrack(lst,cDeep+1,deep,method,treeNode.cs)
         }
     }
-    return null;
+    throw Error("can't find url mapping action:"+lst.join("/"));
 }
 
 
