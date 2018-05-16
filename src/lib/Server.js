@@ -22,12 +22,13 @@ export default class Server {
     app.listen(listen || port); //listen port 
   }
   match(ctx, next) {
-    console.log('22222', this.router)
-    const { middleware, controller, action } = this.router.match(ctx.request.url).action;
+    const { action, paras } = this.router.match(ctx.request.url, ctx.request.method.toLocaleLowerCase());
+    const { middleware, controller, act } = action;
     // mwsLoader module handle global middlewares and local middlewares 
     this.middleware.use(this.app, middleware); 
     // exec controller.action 
-    controller.action(ctx); 
+    controller.act(ctx.request, ctx.response, {...ctx.request.query, ...paras}, ctx);
+    console.log({...ctx.request.query, ...paras})
     next();
   }
   /**
@@ -37,7 +38,7 @@ export default class Server {
     const config = this._formateConfig(defaultConfig);
     const router = await this._loadRouter(config);
     const mws = this._loadMw(mwConfig);
-    this.app.use(this.match); // handle all middlewares 
+    this.app.use(this.match.bind(this)); // handle all middlewares 
     this._setConfig({...defaultConfig, ...config});
     this._setRouter(router);
     this._setMws(mws); //gather middlewares 

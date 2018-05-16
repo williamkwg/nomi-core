@@ -12,12 +12,12 @@ class OrderController{
     serviceInst
 
     @RequestMapping({path:"/order/{type:num}",method:"get",})
-    async index(req,res,ctx,paras) {
+    async index(req,res,paras,ctx) {
         this.serviceInst.loadOrders()
     }
 
     @RequestMapping("/order/{type:num}")
-    async index1(req,res,ctx,paras) {
+    async index1(req,res,paras,ctx) {
         this.serviceInst.loadOrders()
     }
 }
