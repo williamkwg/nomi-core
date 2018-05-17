@@ -13,12 +13,14 @@ class OrderController{
 
     @RequestMapping({path:"/order/{type:num}",method:"get",middleware:['localB']})
     async index(req,res,paras,ctx) {
+        console.log(paras);
         this.serviceInst.loadOrders()
     }
 
     @RequestMapping({path:"/order1",method:"get",middleware:['localC']})
     async index1(req,res,paras,ctx) {
-        this.serviceInst.test()
+        console.log(paras);
+        this.serviceInst.test();
     }
 }
 

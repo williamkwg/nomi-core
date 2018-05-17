@@ -25,9 +25,10 @@ export default class Server {
     const { action, paras } = this.router.match(ctx.request.url, ctx.request.method.toLocaleLowerCase());
     const { middleware, act } = action;
     // mwsLoader module handle global middlewares and local middlewares 
-    this.middleware.use(this.app, middleware, act);
-    // exec controller.action 
-    // act(ctx.request, ctx.response, {...ctx.request.query, ...paras}, ctx);
+    this.middleware.use(ctx, middleware, () => {
+      //exec controller.action 
+      act(ctx.request, ctx.response, {...ctx.request.query, ...paras}, ctx);
+    });
     next();
   }
   /**

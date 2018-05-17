@@ -141,7 +141,7 @@ class MwLoader {
      * @param app: koa实例
      * @param mws: 业务中间件名称 | 列表
      */
-    async use(app, localMws, act) {
+    async use(ctx, localMws, act) {
         if (typeof localMws === 'string') {
             localMws = [localMws];
         }
@@ -156,9 +156,12 @@ class MwLoader {
                 instance && mwList.push(new instance.instance(instance.options)); //将中间件函数对象存入集合
             };
         });
-        const fn = compose(mwList);
-        fn(app.ctx);
-        //mwList.push(act);
+        const actWrap = act => {
+            return (context, next) => act();
+        }
+        mwList.push(actWrap(act));
+        const fn = compose(mwList); // 使用nomi-compose 进行 自执行
+        fn(ctx);
     }
 }
 export default  MwLoader;
