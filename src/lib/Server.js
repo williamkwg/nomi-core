@@ -38,6 +38,7 @@ export default class Server {
     const config = this._formateConfig(defaultConfig);
     const router = await this._loadRouter(config);
     const mws = this._loadMw(mwConfig);
+    
     this.app.use(this.match.bind(this)); // handle all middlewares
     this._setConfig({...defaultConfig, ...config});
     this._setRouter(router);
