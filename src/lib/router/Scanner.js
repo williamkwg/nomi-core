@@ -338,7 +338,6 @@ async function loadController(serviceMap,cpath){
 //scan the services and controllers
 async function scan(cfg){
     let sMap = await loadService(cfg.servicePath);
-    console.log(sMap);
     return await loadController(sMap,cfg.controllerPath);
 }
 exports.scan = scan;
