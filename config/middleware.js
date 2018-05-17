@@ -22,6 +22,20 @@ export default {
         enable: true,
         match: "",
         options: {}
-      } 
+      },
+      {
+        name: 'localB',
+        package: "",
+        enable: true,
+        match: "",
+        options: {}
+      },
+      {
+        name: 'localC',
+        package: "",
+        enable: true,
+        match: "",
+        options: {}
+      }
     ] 
   };

@@ -1,7 +1,7 @@
 import * as koa from 'koa';
 import { join } from 'path';
 const defaultConfig = require(join(process.cwd(), 'config', 'config.default')) // the defalut config of application
-const mwConfig = require(join(process.cwd(), 'config', 'middleware'));
+const mwConfig = join(process.cwd(), 'config', 'middleware');
 import { port, serviceDir, controllerDir, middlewareDir } from '../config/config';
 import Router from './router/Router';
 import MiddlewareLoader from './mwsLoader/lib/MwLoader';
@@ -23,12 +23,11 @@ export default class Server {
   }
   match(ctx, next) {
     const { action, paras } = this.router.match(ctx.request.url, ctx.request.method.toLocaleLowerCase());
-    const { middleware, controller, act } = action;
+    const { middleware, act } = action;
     // mwsLoader module handle global middlewares and local middlewares 
-    this.middleware.use(this.app, middleware); 
+    this.middleware.use(this.app, middleware, act);
     // exec controller.action 
-    controller.act(ctx.request, ctx.response, {...ctx.request.query, ...paras}, ctx);
-    console.log({...ctx.request.query, ...paras})
+    // act(ctx.request, ctx.response, {...ctx.request.query, ...paras}, ctx);
     next();
   }
   /**

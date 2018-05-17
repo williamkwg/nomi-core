@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const default_1 = require("../config/default");
 const fs_1 = require("../util/fs");
 const path_1 = require("path");
-const compose = require("koa-compose");
+const { compose }  = require('../../nomi-compose');
 class MwLoader {
     /**
      * 中间件加载模块 处理中间件
@@ -69,7 +69,7 @@ class MwLoader {
         const enableGMws = this.enableGMws, mwDir = this.mwDir, enableGMwConfs = this.enableGMwConfs;
         enableGMws.clear();
         for (let m of enableGMwConfs) {
-            await fs_1.importFile(m.package || path_1.join(mwDir, m.name)).then(instance => {
+            await fs_1.importFile(m.package || path_1.join(process.cwd(), mwDir, m.name)).then(instance => {
                 if (!enableGMws.has(m.name)) {
                     //收集所有的中间件实例 确定映射关系 存入中央库备用
                     enableGMws.set(m.name, Object.assign({}, m, { instance }));
@@ -89,7 +89,7 @@ class MwLoader {
         mws.clear();
         if (all.length) {
             for (let m of all) {
-                await fs_1.importFile(m.package || path_1.join(mwDir, m.name)).then(instance => {
+                await fs_1.importFile(m.package || path_1.join(process.cwd(), mwDir, m.name)).then(instance => {
                     if (!allMws.has(m.name)) {
                         //收集所有的中间件实例 确定映射关系 存入中央库备用
                         allMws.set(m.name, Object.assign({}, m, { instance }));
@@ -141,7 +141,7 @@ class MwLoader {
      * @param app: koa实例
      * @param mws: 业务中间件名称 | 列表
      */
-    async use(app, localMws) {
+    async use(app, localMws, act) {
         if (typeof localMws === 'string') {
             localMws = [localMws];
         }
@@ -154,10 +154,11 @@ class MwLoader {
             if (mws.has(name)) {
                 instance = mws.get(name);
                 instance && mwList.push(new instance.instance(instance.options)); //将中间件函数对象存入集合
-            }
-            ;
+            };
         });
-        app.use(compose(mwList)); //应用的中间件流-队列
+        const fn = compose(mwList);
+        fn(app.ctx);
+        //mwList.push(act);
     }
 }
 export default  MwLoader;
