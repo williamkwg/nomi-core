@@ -21,11 +21,11 @@ export default class Server {
     this._startApp(); // start app 
     app.listen(listen || port); //listen port 
   }
-  match(ctx, next) {
+  async match(ctx, next) {
     const { action, paras } = this.router.match(ctx.request.url, ctx.request.method.toLocaleLowerCase());
     const { middleware, act } = action;
     // mwsLoader module handle global middlewares and local middlewares 
-    this.middleware.use(ctx, middleware, () => {
+    await this.middleware.use(ctx, middleware, () => {
       //exec controller.action 
       act(ctx.request, ctx.response, {...ctx.request.query, ...paras}, ctx);
     });

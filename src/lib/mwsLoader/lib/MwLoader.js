@@ -3,111 +3,113 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const default_1 = require("../config/default");
 const fs_1 = require("../util/fs");
 const path_1 = require("path");
-const { compose }  = require('../../nomi-compose');
+const compose_1 = require("./compose");
 class MwLoader {
     /**
-     * 中间件加载模块 处理中间件
-     * @param confFile  中间件配置文件  middleware.js
-     * @param mwDir 所有中间件的存放目录
+     * middleware loader module
+     * @param confFile  the path of configuration file: save the middleware configuration information
+     * @param mwDir the storage directory of all middlewares
      */
     constructor(confFile, mwDir) {
-        this.global = []; //全局的中间件 配置
-        this.local = []; // 应用的中间件 配置
-        this.all = []; // 所有的中间件 配置
-        this.enableGMwConfs = []; // 全局启用的中间件 配置列表
-        this.enableGMwNames = []; // 启用的全局中间件 名称列表
-        this.enableLMwConfs = []; // 业务启用的中间件 配置列表
-        this.allMws = new Map(); // 所有的 中间件实例 中央库
-        this.mws = new Map(); // 所有启用状态 中间件实例 中央库 
-        this.enableGMws = new Map(); // 启用状态的全局中间件实例 映射池
-        this.config = confFile;
+        this.global = []; // the configuration collection of all global middleware 
+        this.local = []; // the configuration collection of all local middleware
+        this.enableGMwConfs = []; // the configuration collection of the all enabled global middleware
+        this.enableLMwConfs = []; // the configuration collection of the all enabled local middleware
+        this.enableLocalMws = new Map(); // the map warehouse of all enabled local middleware instance
+        this.enableGMws = new Map(); // the map warehouse of all enabled global middleware instance
+        this.enableGMwList = []; // the collection of all enbaled global middleware instance
+        this.localMwCache = new Map(); // the cache map of the executed local middleware
+        this.configuration = confFile;
         this.mwDir = mwDir;
     }
     /**
-     * 根据配置文件 收集中间件实例
+     * according to the configuration file, cache middleware configuration  and gather middleware instances to map  warehourse
      * @param confFile
      */
     async run() {
-        const conf = await fs_1.importFile(this.config);
-        conf && this.setConf(conf);
-        await this.gatherEnableGMws();
-        this.gatherAll();
-        await this.gatherAllMws();
+        console.log(`middleware loader module read config file success`);
+        const conf = await fs_1.importFile(this.configuration); // import the configuration file of all middleware 
+        conf && this.setConf(conf); // cache configuration
+        await this.gatherEnableGMws(); //  gather all of the enabled global middleware
+        await this.gatherEnableLMws(); // cache all middleware instance 
     }
     /**
-     * 处理 配置文件
+     * read configuration file
      * @param conf
      */
     setConf(conf) {
-        conf.global && this.setGlobal(conf.global);
-        conf.local && this.setLocal(conf.local);
-        this.setEnableGlobal(this.getGlobal().filter(m => {
+        conf.global && this.setGlobal(conf.global); // cache the global middleware configuration
+        conf.local && this.setLocal(conf.local); // cache the local middleware configuration
+        this.setEnableGlobal(// cache the enabled global middleware 
+        this.getGlobal().filter(m => {
             return m.enable;
         }));
-        this.setEnableGMwNames(this.enableGMwConfs.map(m => {
-            return m.name;
-        }));
-        this.setEnableLocal(this.getGlobal().filter(m => {
-            return !m.enable;
+        this.setEnableLocal(// cache the enabled local middleware
+        this.getLocal().filter(m => {
+            return m.enable;
         }));
     }
     /**
-     * 收集所有中间件配置 列表
-     */
-    gatherAll() {
-        this.all = this.getGlobal().map(mw => {
-            return Object.assign({}, default_1.mwItem, mw, { type: default_1.globalV });
-        })
-            .concat(this.getLocal().map(mw => {
-            return Object.assign({}, default_1.mwItem, mw, { type: default_1.localV });
-        }));
-    }
-    /**
-     * 收集启用状态的全局中间件 入库
+     * gather all of the enabled global middleware to the warehouse
      */
     async gatherEnableGMws() {
-        const enableGMws = this.enableGMws, mwDir = this.mwDir, enableGMwConfs = this.enableGMwConfs;
+        const enableGMws = this.getEnableGlobalMws(), mwDir = this.mwDir, enableGMwList = this.enableGMwList, enableGMwConfs = this.enableGMwConfs;
         enableGMws.clear();
         for (let m of enableGMwConfs) {
             await fs_1.importFile(m.package || path_1.join(process.cwd(), mwDir, m.name)).then(instance => {
                 if (!enableGMws.has(m.name)) {
-                    //收集所有的中间件实例 确定映射关系 存入中央库备用
+                    //gather the middleware instance collection to the map warehouse named enableGMWs
                     enableGMws.set(m.name, Object.assign({}, m, { instance }));
+                    // storage all enabled middleware instance
+                    enableGMwList.push(new ((enableGMws.get(m.name) || { instance }).instance)(m.options));
                 }
                 else {
-                    console.error(`全局中间件${m.name}重复定义`);
+                    console.error(`the glabal middleware: ${m.name} has been defined!`);
                 }
             });
         }
     }
     /**
-     * 收集 所有中间件实例 => 中央库
+     * gather all of the enabled local middleware instance to warehouse
      */
-    async gatherAllMws() {
-        const all = this.all, allMws = this.allMws, mws = this.mws, mwDir = this.mwDir;
-        allMws.clear();
-        mws.clear();
-        if (all.length) {
-            for (let m of all) {
-                await fs_1.importFile(m.package || path_1.join(process.cwd(), mwDir, m.name)).then(instance => {
-                    if (!allMws.has(m.name)) {
-                        //收集所有的中间件实例 确定映射关系 存入中央库备用
-                        allMws.set(m.name, Object.assign({}, m, { instance }));
-                    }
-                    else {
-                        console.error(`中间件${m.name}重复定义`);
-                    }
-                    if (m.enable && !mws.has(m.name)) {
-                        //收集启用状态的的中间件实例 确定映射关系 存入有效中央库备用
-                        mws.set(m.name, Object.assign({}, m, { instance }));
-                    }
-                });
-            }
+    async gatherEnableLMws() {
+        const enableLMws = this.enableLocalMws, mwDir = this.mwDir, enableLMwConfs = this.enableLMwConfs;
+        enableLMws.clear();
+        for (let m of enableLMwConfs) {
+            await fs_1.importFile(m.package || path_1.join(process.cwd(), mwDir, m.name)).then(instance => {
+                if (!enableLMws.has(m.name)) {
+                    //gather the middleware instance collection to the map warehouse named enableGMWs
+                    enableLMws.set(m.name, Object.assign({}, m, { instance }));
+                }
+                else {
+                    console.error(`the glabal middleware: ${m.name} has been defined!`);
+                }
+            });
         }
     }
-    getEnableGMws() {
+    ready() {
+        return this.getEnableGMwList().length > 0;
+    }
+    /** getter */
+    getGlobal() {
+        return this.global;
+    }
+    getLocal() {
+        return this.local;
+    }
+    getEnableGlobalMws() {
         return this.enableGMws;
     }
+    getEnableLocalMws() {
+        return this.enableLocalMws;
+    }
+    getEnableGMwList() {
+        return this.enableGMwList;
+    }
+    getLocalMwCache() {
+        return this.localMwCache;
+    }
+    /** setter */
     setGlobal(mws = default_1.global) {
         this.global = mws;
     }
@@ -120,48 +122,48 @@ class MwLoader {
     setEnableLocal(mws) {
         this.enableLMwConfs = mws;
     }
-    setEnableGMwNames(gMwNames) {
-        this.enableGMwNames = gMwNames;
-    }
-    getEnableGMwNames() {
-        return this.enableGMwNames;
-    }
-    getGlobal() {
-        return this.global;
-    }
-    getLocal() {
-        return this.local;
-    }
-    getMws() {
-        return this.mws;
-    }
     /**
-     * 对外暴露API：加载传入的应用程序的中间件  + loader会默认加载全局中间件，调用方只需要传入业务的中间件列表即可
-     * mwLoaderInstance.use(app, mws)
-     * @param app: koa实例
-     * @param mws: 业务中间件名称 | 列表
+     * handle the all valid middleware for one request, include global enabled middleware and matched local middleware, then autoexec controller.action
+     * @param ctx ctx object
+     * @param localMws local middleware list for one request
+     * @param action the action of local controller
      */
-    async use(ctx, localMws, act) {
+    async use(ctx, localMws, action) {
         if (typeof localMws === 'string') {
             localMws = [localMws];
         }
-        await this.run();
-        const mws = this.getMws(); // 启用状态的中间件库
-        const globalMws = this.getEnableGMwNames();
-        const mwList = [];
+        this.ready() || await this.run(); // lazy load config, and ensure that only run once 
+        const enableLocalMws = this.getEnableLocalMws(); // all enabled local middleware warehouse
+        // in the process of the request, use variable mwList to store all valid middleware
+        const mwList = this.getEnableGMwList(); // the initial value is enabled global middleware list
+        const localMwCache = this.getLocalMwCache(); // the cache for local middleware
         let instance = null;
-        globalMws.concat(localMws).forEach(name => {
-            if (mws.has(name)) {
-                instance = mws.get(name);
-                instance && mwList.push(new instance.instance(instance.options)); //将中间件函数对象存入集合
-            };
+        localMws.forEach(name => {
+            if (enableLocalMws.has(name)) {
+                instance = enableLocalMws.get(name);
+                if (!instance) {
+                    return;
+                }
+                if (localMwCache.has(name)) {
+                    mwList.push(localMwCache.get(name)); // get local middleware instance from cache 
+                }
+                else {
+                    mwList.push(new instance.instance(instance.options)); // store enable local instance to variable mwList
+                    localMwCache.set(name, new instance.instance(instance.options)); // cache executed local middleware for 
+                }
+            }
+            ;
         });
-        const actWrap = act => {
-            return (context, next) => act();
-        }
-        mwList.push(actWrap(act));
-        const fn = compose(mwList); // 使用nomi-compose 进行 自执行
-        fn(ctx);
+        mwList.push(this.actionWrap(action)); // add controller.action to middleware queue
+        compose_1.compose(mwList)(ctx); // use nomi-compose to autoexec middleware procedure
+    }
+    /**
+     * action wrap
+     * @param action
+     * @returns function
+     */
+    actionWrap(action = (() => { })) {
+        return (context, next) => action();
     }
 }
-export default  MwLoader;
+export default MwLoader;
