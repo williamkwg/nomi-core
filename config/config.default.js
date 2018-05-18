@@ -4,7 +4,7 @@ const config = {
   "description": "nomiproject",
   "author": "weiguo.kong",
   "version": "1.0.0",
-  "port": 3333,
+  "port": 2222,
   "workers": 4,
   "multipart": {
     "fileExtensions": [ '.xlsx', '.xls' ]
@@ -35,9 +35,9 @@ const config = {
         "connectionLimit": 4 
     }
   },
-  "controllerDir": "controller",
+  "controllerDir": "/controller/",
   "logDir": "logs",
-  "serviceDir": "service",
+  "serviceDir": "/service/",
   "middlewareDir": "middleware",
   "pluginDir": "plugin",
   "task": "task"

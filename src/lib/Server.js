@@ -1,12 +1,12 @@
 import * as koa from 'koa';
 import { join } from 'path';
-const defaultConfig = require(join(process.cwd(), 'config', 'config.default')) // the defalut config of application
 const mwConfig = join(process.cwd(), 'config', 'middleware');
 import { port, serviceDir, controllerDir, middlewareDir } from '../config/config';
 import Router from './router/Router';
 import MiddlewareLoader from './mwsLoader/lib/MwLoader';
 export default class Server {
   app;
+  defaultConfig;
   config;
   router;
   middleware;
@@ -15,11 +15,21 @@ export default class Server {
   /**
    * @param listen : listen server port 
    */
-  constructor(listen) {
+  constructor(conf) {
+    console.log(conf)
+    if (!conf) {
+      console.log(`nomi-core module need the config file of the application project!`);
+      return;
+    }
+    if (conf.port && isNaN(conf.port)) {
+      console.log(`app.listen must be a number!`);
+      return;
+    }
     const app = new koa.default();
     this.app = app;
+    this._setDefaultConf(conf);
     this._startApp(); // start app 
-    app.listen(listen || port); //listen port 
+    app.listen(Number(conf.port) || port); //listen port
   }
   async match(ctx, next) {
     const { action, paras } = this.router.match(ctx.request.url, ctx.request.method.toLocaleLowerCase());
@@ -35,12 +45,11 @@ export default class Server {
    * start application - precompile code
    */
    async _startApp() {
-    const config = this._formateConfig(defaultConfig);
+    const config = this._formateConfig(this._getDefaultConf());
     const router = await this._loadRouter(config);
     const mws = this._loadMw(mwConfig);
-    
     this.app.use(this.match.bind(this)); // handle all middlewares
-    this._setConfig({...defaultConfig, ...config});
+    this._setConfig({...this._getDefaultConf(), ...config});
     this._setRouter(router);
     this._setMws(mws); //gather middlewares 
     this._setPlugin(this._loadPlugin()); // gather plugins dependencies
@@ -55,9 +64,15 @@ export default class Server {
     const controllerPath = config.controllerDir || controllerDir;
     return { servicePath, controllerPath };
   }
+  _getDefaultConf() {
+    return this.defaultConfig;
+  }
   /** setter  */
   _setConfig(config) {
     this.config = config;
+  }
+  _setDefaultConf(conf) {
+    this.defaultConfig = conf;
   }
   _setPlugin(plugin) {
     this.plugin = plugin;
@@ -77,7 +92,7 @@ export default class Server {
    */
   _loadExe() {}
   _loadMw(mwConfig) {
-    const mwl = new MiddlewareLoader(mwConfig, defaultConfig.middlewareDir || middlewareDir);
+    const mwl = new MiddlewareLoader(mwConfig, this._getDefaultConf().middlewareDir || middlewareDir);
     return mwl;
   }
   _loadPlugin() { return {}}
