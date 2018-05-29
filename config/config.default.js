@@ -4,7 +4,7 @@ const config = {
   "description": "nomiproject",
   "author": "weiguo.kong",
   "version": "1.0.0",
-  "port": 2222,
+  "port": 3333,
   "workers": 4,
   "multipart": {
     "fileExtensions": [ '.xlsx', '.xls' ]
@@ -39,7 +39,6 @@ const config = {
   "logDir": "logs",
   "serviceDir": "/service/",
   "middlewareDir": "middleware",
-  "pluginDir": "plugin",
   "task": "task"
 };
 export default config;

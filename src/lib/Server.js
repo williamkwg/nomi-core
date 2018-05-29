@@ -1,6 +1,7 @@
 import * as koa from 'koa';
 import { join } from 'path';
 const mwConfig = join(process.cwd(), 'config', 'middleware');
+// const pluginConfig = require(join(process.cwd(), 'config', 'plugin'));
 import { port, serviceDir, controllerDir, middlewareDir } from '../config/config';
 import Router from './router/Router';
 import MiddlewareLoader from './mwsLoader/lib/MwLoader';
@@ -10,13 +11,11 @@ export default class Server {
   config;
   router;
   middleware;
-  plugin;
 
   /**
    * @param listen : listen server port 
    */
   constructor(conf) {
-    console.log(conf)
     if (!conf) {
       console.log(`nomi-core module need the config file of the application project!`);
       return;
@@ -47,19 +46,19 @@ export default class Server {
    async _startApp() {
     const config = this._formateConfig(this._getDefaultConf());
     const router = await this._loadRouter(config);
-    const mws = this._loadMw(mwConfig);
+    const mws = this._loadMw();
     this.app.use(this.match.bind(this)); // handle all middlewares
     this._setConfig({...this._getDefaultConf(), ...config});
     this._setRouter(router);
     this._setMws(mws); //gather middlewares 
-    this._setPlugin(this._loadPlugin()); // gather plugins dependencies
+    // this._setPlugin(this._loadPlugin()); // gather plugins dependencies
     this._loadExe(); // exec the custom entry file
   }
   /**
    * all configuration files of the application formate to the configuration of the core-nomi module
    * @param config 
    */
-  _formateConfig(config/*, logConfig, mwConfig, pluginConfig*/) {
+  _formateConfig(config) {
     const servicePath = config.serviceDir || serviceDir;
     const controllerPath = config.controllerDir || controllerDir;
     return { servicePath, controllerPath };
@@ -73,9 +72,6 @@ export default class Server {
   }
   _setDefaultConf(conf) {
     this.defaultConfig = conf;
-  }
-  _setPlugin(plugin) {
-    this.plugin = plugin;
   }
   _setRouter(router) {
     this.router = router;
@@ -91,9 +87,8 @@ export default class Server {
    * exec the custom entry file
    */
   _loadExe() {}
-  _loadMw(mwConfig) {
+  _loadMw() {
     const mwl = new MiddlewareLoader(mwConfig, this._getDefaultConf().middlewareDir || middlewareDir);
     return mwl;
   }
-  _loadPlugin() { return {}}
 };

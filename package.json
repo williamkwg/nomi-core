@@ -4,7 +4,8 @@
   "description": "a core package of nomi.js framework",
   "scripts": {
     "build": "babel src -d dist --source-maps",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "babel-node --inspect index.js"
   },
   "main": "./dist/index.js",
   "private": true,

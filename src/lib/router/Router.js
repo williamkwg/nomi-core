@@ -168,11 +168,9 @@ function parseUrl(url){
 async function init(cfg){
     //生成actionMap
     let aLst = await sanner.scan(cfg);
-    console.log(aLst);
 
     //生成树和图
     let res = toTreeMap(aLst);
-    console.log(res);
 
     //缓存留作匹配时用
     gData.map = res.map;
