@@ -118,7 +118,8 @@ function backtrack(lst,cDeep,deep,method,tree){
     }
     var cs = tree,str = lst[cDeep];
     var cd = genCadiates(str,cs);
-    for(let i=0,l = cd.length;i<l;i++){
+    let i = 0, l = cd.length;
+    for(;i<l;i++){
         let treeNode = cs[cd[i]];
         if(cDeep==deep){
             if(treeNode.leaf){
