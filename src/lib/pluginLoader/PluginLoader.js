@@ -8,7 +8,7 @@ export default class PluginLoader {
    * get plugin instance by param name
    * @param {*} name 
    */
-  static get(name) {
+  static get(name, ...arg) {
     let pluginInstance = null;
     let path = '';
     if (!name) {
@@ -32,16 +32,21 @@ export default class PluginLoader {
       return;
     }
     path = config.package || join(process.cwd(), config.path);
+    const pluginClass = require(path).default;
     try {
-      console.log(`get plugin instance by new `)
-      pluginInstance = new (require(path).default)(config.options);
+      console.log(`get plugin instance by new `);
+      if (!!arg.length) {
+        pluginInstance = new pluginClass(...arg); // use arguments to new the plugin instance
+      } else {
+        pluginInstance = new pluginClass(config.options); // use options to new the plugin instance
+      }
       if (pluginInstance && !this.cache.has(name)) {
         this.cache.set(name, pluginInstance); // cache the plugin instance
       }
       return pluginInstance; // return instance
     } catch(err) {
       try {
-        return require(path).default;  // return class
+        return pluginClass;  // return class
       } catch (e) {
         throw e;
       }
