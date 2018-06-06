@@ -24,6 +24,7 @@ class OrderController{
 
     @RequestMapping({path:"/order1",method:"get",middleware:['localC']})
     async index1(req,res,paras,ctx) {
+        pluginLoader.get('pluginA').go('order1');
         this.serviceInst.test();
     }
 }

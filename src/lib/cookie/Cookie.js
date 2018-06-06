@@ -36,7 +36,7 @@ export default class Cookie {
    * get the string description of the cookie
    */
   toString() {
-    if (!value) {
+    if (!this.value) {
       return '';
     }
     return this.name + '=' + this.value;
