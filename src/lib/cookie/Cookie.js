@@ -39,7 +39,7 @@ export default class Cookie {
     if (!this.value) {
       return '';
     }
-    return this.name + '=' + this.value;
+    return '; ' + this.name + '=' + this.value;
   }
 
   /**
