@@ -101,7 +101,7 @@ export default class Cookies {
    * @param {*} cookies 
    */
   _setCookies(cookies) {
-    this.ctx.response.set('Set-Cookie', cookies);
+    this.ctx.res.setHeader('Set-Cookie', cookies);
   }
 
   /**

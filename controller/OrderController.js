@@ -16,9 +16,9 @@ class OrderController{
         pluginLoader.get('pluginA').go('home');
         //const cookie = pluginLoader.get('cookie', ctx, 'nomi');
         const cookie = new Cookie(ctx, 'nomi');
-        cookie.set('myname', 'weiguo');
+        cookie.set('cookieTest', 'test');
         await this.serviceInst.loadOrders();
-        console.log(cookie.get('myname'));
+        console.log(cookie.get('cookieTest'));
         res.body = res.headerSent ? '响应头已发送' : '响应头未发送';
     }
 
@@ -26,7 +26,7 @@ class OrderController{
     async index1(req,res,paras,ctx) {
         const cookie = new Cookie(ctx, 'nomi');
         pluginLoader.get('pluginA').go('order1');
-        console.log(cookie.get('myname'));
+        console.log(cookie.get('cookieTest'));
         this.serviceInst.test();
     }
 }
