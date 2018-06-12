@@ -1,6 +1,6 @@
 import * as koa from 'koa';
 import { join } from 'path';
-const mwConfig = join(process.cwd(), 'config', 'middleware');
+const mwConfig = require(join(process.cwd(), 'config', 'middleware'));
 // const pluginConfig = require(join(process.cwd(), 'config', 'plugin'));
 import { port, serviceDir, controllerDir, middlewareDir } from '../config/config';
 import Router from './router/Router';
@@ -88,7 +88,7 @@ export default class Server {
    */
   _loadExe() {}
   _loadMw() {
-    const mwl = new MiddlewareLoader(mwConfig, this._getDefaultConf().middlewareDir || middlewareDir);
+    const mwl = new MiddlewareLoader(mwConfig(this.app), this._getDefaultConf().middlewareDir || middlewareDir);
     return mwl;
   }
 };
