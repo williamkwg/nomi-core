@@ -8,7 +8,6 @@
     "start": "babel-node --inspect index.js"
   },
   "main": "./index.js",
-  "private": true,
   "keywords": [
     "nomi",
     "node",
