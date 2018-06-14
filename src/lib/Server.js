@@ -3,7 +3,7 @@ import { join } from 'path';
 const mwConfig = require(join(process.cwd(), 'config', 'middleware'));
 import { port, serviceDir, controllerDir, middlewareDir, defaultLog } from '../config/config';
 import Router from 'nomi-router';
-import logger from 'nomi-logger';
+import Logger from 'nomi-logger';
 import MiddlewareLoader from 'nomi-mwloader';
 export default class Server {
   app;
@@ -23,7 +23,7 @@ export default class Server {
       console.log(`nomi-core module need the config file of the application project!`);
       return;
     }
-    this._initLogger({ ...config.log , ...defaultLog });
+    this._initLogger({ ...conf.log , ...defaultLog });
     if (conf.port && isNaN(conf.port)) {
       this.SysLogger.ERROR("date is {}, app.listen must be a number!", new Date());
       return;
@@ -35,9 +35,9 @@ export default class Server {
     app.listen(Number(conf.port) || port); //listen port
   }
   _initLogger(config) {
-    const { SysLogger, Logger } = logger.init(config);
-    this.SysLogger = SysLogger; // logger instance for system
-    this.logger = Logger; // logger instance for user
+    Logger.init(config);
+    this.SysLogger = Logger.SysLogger; // logger instance for system
+    this.logger = Logger.Logger; // logger instance for user
   }
   async match(ctx, next) {
     const { action, paras } = this.router.match(ctx.request.url, ctx.request.method.toLocaleLowerCase());

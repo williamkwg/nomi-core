@@ -7,7 +7,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "babel-node --inspect index.js"
   },
-  "main": "./dist/index.js",
+  "main": "./index.js",
   "private": true,
   "keywords": [
     "nomi",
@@ -25,11 +25,11 @@
   "dependencies": {
     "babel-runtime": "^6.26.0",
     "es6-promise": "^4.2.4",
-    "nomi-mwloader": "^1.0.0",
-    "nomi-logger": "^1.0.1",
-    "nomi-router": "^1.0.1",
     "koa": "^2.5.0",
     "koa-compose": "^4.0.0",
+    "nomi-logger": "^1.0.1",
+    "nomi-mwloader": "^1.0.0",
+    "nomi-router": "^1.0.1",
     "transform-runtime": "0.0.0"
   },
   "devDependencies": {
