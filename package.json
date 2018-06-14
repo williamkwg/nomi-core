@@ -1,11 +1,11 @@
 {
   "name": "nomi-core",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "a core package of nomi.js framework",
   "scripts": {
-    "build": "babel src -d dist --source-maps"
+    "build": "babel src --out-dir libs"
   },
-  "main": "./src/lib/Server.js",
+  "main": "./libs/lib/Server.js",
   "keywords": [
     "nomi",
     "node",
