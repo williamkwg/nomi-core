@@ -1,11 +1,12 @@
 {
   "name": "nomi-core",
-  "version": "1.0.4",
+  "version": "1.0.6",
   "description": "a core package of nomi.js framework",
   "scripts": {
-    "build": "babel src --out-dir libs"
+    "build": "babel src --out-dir libs",
+    "start": "babel-node --inspect index.js"
   },
-  "main": "./libs/lib/Server.js",
+  "main": "./src/lib/Server.js",
   "keywords": [
     "nomi",
     "node",
@@ -25,12 +26,13 @@
     "koa": "^2.5.0",
     "koa-compose": "^4.0.0",
     "nomi-logger": "^1.0.1",
-    "nomi-mwloader": "^1.0.0",
+    "nomi-mwloader": "^1.0.1",
     "nomi-router": "^1.0.1",
     "transform-runtime": "0.0.0"
   },
   "devDependencies": {
     "babel-core": "^6.26.3",
+    "babel-loader": "^7.1.4",
     "babel-plugin-transform-async-to-generator": "^6.24.1",
     "babel-plugin-transform-class-properties": "^6.24.1",
     "babel-plugin-transform-decorators": "^6.24.1",
