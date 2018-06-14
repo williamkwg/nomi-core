@@ -1,16 +1,19 @@
 import * as koa from 'koa';
 import { join } from 'path';
 const mwConfig = require(join(process.cwd(), 'config', 'middleware'));
-// const pluginConfig = require(join(process.cwd(), 'config', 'plugin'));
-import { port, serviceDir, controllerDir, middlewareDir } from '../config/config';
-import Router from './router/Router';
-import MiddlewareLoader from './mwsLoader/lib/MwLoader';
+import { port, serviceDir, controllerDir, middlewareDir, defaultLog } from '../config/config';
+import Router from 'nomi-router';
+import logger from 'nomi-logger';
+import MiddlewareLoader from 'nomi-mwloader';
 export default class Server {
   app;
   defaultConfig;
   config;
   router;
   middleware;
+  logger;
+  SysLogger;
+  
 
   /**
    * @param listen : listen server port 
@@ -20,8 +23,9 @@ export default class Server {
       console.log(`nomi-core module need the config file of the application project!`);
       return;
     }
+    this._initLogger({ ...config.log , ...defaultLog });
     if (conf.port && isNaN(conf.port)) {
-      console.log(`app.listen must be a number!`);
+      this.SysLogger.ERROR("date is {}, app.listen must be a number!", new Date());
       return;
     }
     const app = new koa.default();
@@ -30,23 +34,41 @@ export default class Server {
     this._startApp(); // start app 
     app.listen(Number(conf.port) || port); //listen port
   }
+  _initLogger(config) {
+    const { SysLogger, Logger } = logger.init(config);
+    this.SysLogger = SysLogger; // logger instance for system
+    this.logger = Logger; // logger instance for user
+  }
   async match(ctx, next) {
     const { action, paras } = this.router.match(ctx.request.url, ctx.request.method.toLocaleLowerCase());
     const { middleware, act } = action;
-    // mwsLoader module handle global middlewares and local middlewares 
+    const params = {...ctx.request.query, ...paras};
+    let startTime = null;
+    if (this.config.log.user.requestLog) {
+      startTime = new Date();
+      this.logger.INFO("date is {}, request[{}][{}] start, params is {}", startTime , ctx.url, ctx.method, params);
+    }
+    // mwsLoader module handle global middlewares and local middlewares
     await this.middleware.use(ctx, middleware, () => {
       //exec controller.action 
-      act(ctx.request, ctx.response, {...ctx.request.query, ...paras}, ctx);
+      act(ctx.request, ctx.response, params, ctx);
     });
     next();
+    if (this.config.log.user.requestLog) {
+      const endTime = new Date();
+      this.logger.INFO("date is {}, request[{}][{}] end, request take {} milliseconds", endTime, ctx.url, ctx.method, (endTime.getTime() - startTime.getTime()));
+    }
   }
   /**
    * start application - precompile code
    */
    async _startApp() {
+    this.SysLogger.INFO("date is {}, application start!", new Date());
     const config = this._formateConfig(this._getDefaultConf());
     const router = await this._loadRouter(config);
+    this.SysLogger.INFO("date is {}, the router module loaded", new Date());
     const mws = this._loadMw();
+    this.SysLogger.INFO("date is {}, the middlewares module loaded", new Date());
     this.app.use(this.match.bind(this)); // handle all middlewares
     this._setConfig({...this._getDefaultConf(), ...config});
     this._setRouter(router);
