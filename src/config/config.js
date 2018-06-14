@@ -11,7 +11,8 @@ export const defaultLog = {
   user: {
     path: join(process.cwd(), 'log', 'user'),
     level: 'WARN',
-    requestLog: true
+    requestLog: true,
+    requestPath: join(process.cwd(), 'log', 'request')
   },
   error: {
     path: join(process.cwd(), 'log', 'error'),

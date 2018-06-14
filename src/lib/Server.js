@@ -13,6 +13,7 @@ export default class Server {
   middleware;
   logger;
   SysLogger;
+  requestLogger;
   
 
   /**
@@ -45,8 +46,9 @@ export default class Server {
     const params = {...ctx.request.query, ...paras};
     let startTime = null;
     if (this.config.log.user.requestLog) {
+      this.requestLogger = Logger.newInstance({level: 'INFO', path: this.config.log.user.requestPath});
       startTime = new Date();
-      this.logger.INFO("date is {}, request[{}][{}] start, params is {}", startTime , ctx.url, ctx.method, params);
+      this.requestLogger && this.requestLogger.INFO("date is {}, request[{}][{}] start, params is {}", startTime , ctx.url, ctx.method, params);
     }
     // mwsLoader module handle global middlewares and local middlewares
     await this.middleware.use(ctx, middleware, () => {
@@ -56,7 +58,7 @@ export default class Server {
     next();
     if (this.config.log.user.requestLog) {
       const endTime = new Date();
-      this.logger.INFO("date is {}, request[{}][{}] end, request take {} milliseconds", endTime, ctx.url, ctx.method, (endTime.getTime() - startTime.getTime()));
+      this.requestLogger && this.requestLogger.INFO("date is {}, request[{}][{}] end, request take {} milliseconds", endTime, ctx.url, ctx.method, (endTime.getTime() - startTime.getTime()));
     }
   }
   /**

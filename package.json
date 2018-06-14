@@ -25,7 +25,7 @@
     "es6-promise": "^4.2.4",
     "koa": "^2.5.0",
     "koa-compose": "^4.0.0",
-    "nomi-logger": "^1.0.1",
+    "nomi-logger": "^1.0.2",
     "nomi-mwloader": "^1.0.1",
     "nomi-router": "^1.0.1",
     "transform-runtime": "0.0.0"
