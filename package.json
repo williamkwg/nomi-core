@@ -1,6 +1,6 @@
 {
   "name": "nomi-core",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "a core package of nomi.js framework",
   "scripts": {
     "build": "babel src --out-dir libs",
@@ -26,7 +26,7 @@
     "koa": "^2.5.0",
     "koa-compose": "^4.0.0",
     "nomi-logger": "^1.0.3",
-    "nomi-mwloader": "^1.0.1",
+    "nomi-mwloader": "^1.0.2",
     "nomi-router": "^1.0.1",
     "transform-runtime": "0.0.0"
   },
