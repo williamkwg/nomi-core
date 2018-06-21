@@ -110,7 +110,13 @@ export default class Server {
   /**
    * exec the custom entry file
    */
-  _loadExe() {}
+  _loadExe() {
+    try {
+      requrie(join(process.cwd(), 'app.js'));
+    } catch(err) {
+      return '';
+    }
+  }
   _loadMw() {
     const mwl = new MiddlewareLoader(mwConfig(this.app), this._getDefaultConf().middlewareDir || middlewareDir);
     return mwl;
