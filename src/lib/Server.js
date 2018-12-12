@@ -14,8 +14,6 @@ export default class Server {
   logger;
   SysLogger;
   requestLogger;
-  
-
   /**
    * @param listen : listen server port 
    */
@@ -31,7 +29,7 @@ export default class Server {
     }
     const app = new koa.default();
     this.app = app;
-    this._setDefaultConf(conf);
+    this._setDefaultConf({log: defaultLog, ...conf});
     this._startApp(); // start app 
     app.listen(Number(conf.port) || port); //listen port
   }
@@ -111,8 +109,9 @@ export default class Server {
    * exec the custom entry file
    */
   _loadExe() {
+    const app = this.app;
     try {
-      requrie(join(process.cwd(), 'app.js'));
+      requrie(join(process.cwd(), 'app.js'))(app);
     } catch(err) {
       return '';
     }

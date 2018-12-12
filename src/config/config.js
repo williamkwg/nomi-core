@@ -12,7 +12,7 @@ export const defaultLog = {
     path: join(process.cwd(), 'log', 'user'),
     level: 'WARN',
     requestLog: true,
-    requestPath: join(process.cwd(), 'log', 'request')
+    requestPath: join(process.cwd(), 'log', 'access')
   },
   error: {
     path: join(process.cwd(), 'log', 'error'),
