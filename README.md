@@ -1,17 +1,26 @@
-#### ***文中链接各位根据自己项目对应修改***
---------------------------------------------------------------------------------
-#### **项目管理**：
-#### *sp*:(http://sp.corp.qunar.com/default.aspx)<br />
+# nomi-core
 
-#### *jira*:(http://task.corp.qunar.com/browse/)<br />
---------------------------------------------------------------------------------
-#### **发布相关**:
-#### *devbds*:(http://devbds.corp.qunar.com/jenkins/)<br />
-#### *bds*:(http://bds.corp.qunar.com/jenkins/)<br />
---------------------------------------------------------------------------------
-#### **质量管理**:
-#### *bugfree*:(http://svn.corp.qunar.com/bugfree)<br />
-#### *case*:(http://bugfree.corp.qunar.com/bugfree/index.php/case)<br />
---------------------------------------------------------------------------------
-#### **项目信息**:
-#### *wiki*:(http://wiki.corp.qunar.com/)<br />
+the core package of nomi framework.
+
+## Installation
+
+``` bash
+$ npm install nomi-core --save
+```
+
+Node.js >= 8.0.0  required.
+
+## API
+
+- match
+
+## Usage
+
+``` javascript
+
+import Server from 'nomi-core';
+const server = new Server('d:nomi-test/config/config.js');
+const app = new require('koa');
+app.use(server.match);
+
+```

@@ -1,6 +1,6 @@
 {
   "name": "nomi-core",
-  "version": "1.0.13",
+  "version": "1.0.15",
   "description": "a core package of nomi.js framework",
   "scripts": {
     "build": "babel src --out-dir libs",
@@ -8,17 +8,21 @@
   },
   "main": "./lib/lib/Server.js",
   "keywords": [
+    "core",
     "nomi",
     "node",
     "framework",
     "koa2",
-    "koa"
+    "koa",
+    "nomi-core"
   ],
   "repository": {
     "type": "git",
-    "url": "git@gitlab.corp.qunar.com:fe/nomi-core.git"
+    "url": "https://github.com/williamkwg/nomi-core.git",
+    "innerurl": "git@gitlab.corp.qunar.com:fe/nomi-core.git"
   },
   "author": "weiguo.kong",
+  "email": "weiguo.kong@qunar.com",
   "license": "ISC",
   "dependencies": {
     "babel-cli": "^6.26.0",
