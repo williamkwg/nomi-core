@@ -39,8 +39,8 @@ export default class Server {
     this.logger = Logger.Logger; // logger instance for user
   }
   async match(ctx, next) {
-    const { action, paras } = this.router.match(ctx.request.url, ctx.request.method.toLocaleLowerCase());
-    const { middleware, act } = action;
+    const { action={}, paras={} } = this.router.match(ctx.request.url, ctx.request.method.toLocaleLowerCase());
+    const { middleware=[], act=()=>{} } = action;
     const params = {...ctx.request.query, ...paras};
     let startTime = null;
     if (this.config.log.user.requestLog) {
@@ -51,7 +51,7 @@ export default class Server {
     // mwsLoader module handle global middlewares and local middlewares
     await this.middleware.use(ctx, middleware, () => {
       //exec controller.action 
-      act(ctx.request, ctx.response, params, ctx);
+      act && act(ctx.request, ctx.response, params, ctx);
     });
     next();
     if (this.config.log.user.requestLog) {
