@@ -32,6 +32,7 @@ export default class Server {
     this._setDefaultConf({log: defaultLog, ...conf});
     this._startApp(); // start app 
     app.listen(Number(conf.port) || port); //listen port
+    console.log(`nomi started on http://127.0.0.1:${conf.port || port}`);
   }
   _initLogger(config) {
     Logger.init(config);

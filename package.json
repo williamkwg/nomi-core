@@ -1,6 +1,6 @@
 {
   "name": "nomi-core",
-  "version": "1.0.17",
+  "version": "1.0.18",
   "description": "a core package of nomi.js framework",
   "scripts": {
     "build": "babel src --out-dir lib",
